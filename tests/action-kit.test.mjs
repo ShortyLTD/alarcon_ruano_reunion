@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { registerHooks } from 'node:module';
 registerHooks({ resolve(specifier, context, nextResolve) {
-  return nextResolve(['./planner', './action-kit'].includes(specifier) ? `${specifier}.ts` : specifier, context);
+  return nextResolve(['./planner', './action-kit', './vendor-evidence', './guest-guide'].includes(specifier) ? `${specifier}.ts` : specifier, context);
 } });
 const { defaultBrief, defaultWorkspace, makeSchedule } = await import('../lib/planner.ts');
 const { bookingChecks, followUp, confirmationRequest, guestReminder, comparisonRows } = await import('../lib/action-kit.ts');

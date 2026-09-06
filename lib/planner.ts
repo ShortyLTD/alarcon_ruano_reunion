@@ -15,6 +15,10 @@ export type Vendor = {
 export type Quote = {
   id: string; vendorId: string; amount: number; deposit: number;
   deadline: string; status: 'estimate' | 'quoted' | 'confirmed'; notes: string;
+  /** What the charge pays for; a hotel can supply both event and lodging quotes. */
+  costType?: 'event' | 'lodging';
+  /** Keep alternative proposals visible without adding them to the chosen plan. */
+  includedInBudget?: boolean;
 };
 
 export type ScheduleItem = {
@@ -24,6 +28,7 @@ export type ScheduleItem = {
 export type Workspace = {
   brief: Brief; selected: string[]; completed: string[]; quotes: Quote[];
   schedule: ScheduleItem[]; guestMessage: string; created: boolean; drafts?: Record<string, string>;
+  guestSettings?: { scheduleIds: string[]; confirmedLocationIds: string[] };
 };
 
 export const defaultBrief: Brief = {
@@ -52,7 +57,7 @@ export function makeSchedule(brief: Brief): ScheduleItem[] {
   }[brief.style];
   const nights = Math.min(14, Math.max(1, Math.trunc(brief.nights) || 1));
   const schedule: ScheduleItem[] = [
-    { id: 'arrival', day: 0, time: '15:00', title: 'Arrive & settle in', location: 'Your chosen hotel', notes: 'Check-in times and booking links will be added after you confirm lodging.' },
+    { id: 'arrival', day: 0, time: '15:00', title: 'Arrive & settle in', location: brief.rooms ? 'Your chosen hotel' : 'Santa Cruz · arrival point to confirm', notes: brief.rooms ? 'Check-in times and booking links will be added after you confirm lodging.' : 'Agree on an arrival meeting point and transport. No group lodging is requested in this plan.' },
     { id: 'welcome', day: 0, time: '18:00', title: 'An easy welcome dinner', location: 'Group restaurant · to confirm', notes: `Plan for approximately ${brief.dinnerGuests} people. Confirm the final count, menu, dietary needs, and total price.` },
     { id: 'gathering', day: 1, time: '11:00', ...gathering },
     { id: 'free-time', day: 1, time: nights === 1 ? '13:00' : '15:00', title: 'A little Santa Cruz time', location: 'Choose your own adventure', notes: 'Leave room for a walk, a nap, beach time, or exploring together. Keep optional activities optional.' },
@@ -95,37 +100,162 @@ export function parseWorkspace(value: unknown): Workspace | null {
     }
   }
   const quotes: Quote[] = [];
+  const quoteIds = new Set<string>();
   for (const q of w.quotes) {
     if (!record(q) || !['id', 'vendorId', 'deadline', 'notes'].every(key => string(q[key])) || !number(q.amount) || !number(q.deposit) || !['estimate', 'quoted', 'confirmed'].includes(String(q.status))) return null;
     if (q.deposit > q.amount || (q.deadline !== '' && (!/^\d{4}-\d{2}-\d{2}$/.test(String(q.deadline)) || dateLabel(String(q.deadline)) === 'Dates to be decided'))) return null;
-    quotes.push({ id: q.id as string, vendorId: q.vendorId as string, deadline: q.deadline as string, notes: q.notes as string, amount: q.amount, deposit: q.deposit, status: q.status as Quote['status'] });
+    if (!string(q.id, 200) || !q.id || quoteIds.has(q.id) || !string(q.vendorId, 200) || !q.vendorId) return null;
+    if (q.costType !== undefined && q.costType !== 'event' && q.costType !== 'lodging') return null;
+    if (q.includedInBudget !== undefined && typeof q.includedInBudget !== 'boolean') return null;
+    quoteIds.add(q.id);
+    quotes.push({ id: q.id, vendorId: q.vendorId, deadline: q.deadline as string, notes: q.notes as string, amount: q.amount, deposit: q.deposit, status: q.status as Quote['status'], ...(q.costType ? { costType: q.costType } : {}), ...(q.includedInBudget !== undefined ? { includedInBudget: q.includedInBudget } : {}) });
   }
   const schedule: ScheduleItem[] = [];
   for (const item of w.schedule) {
     if (!record(item) || !['id', 'time', 'title', 'location', 'notes'].every(key => string(item[key])) || !number(item.day, 365) || !Number.isInteger(item.day)) return null;
     schedule.push({ id: item.id as string, time: item.time as string, title: item.title as string, location: item.location as string, notes: item.notes as string, day: item.day });
   }
+  let guestSettings: Workspace['guestSettings'];
+  if (w.guestSettings !== undefined) {
+    const settings = w.guestSettings;
+    if (!record(settings) || !Array.isArray(settings.scheduleIds) || !Array.isArray(settings.confirmedLocationIds)) return null;
+    if ([settings.scheduleIds, settings.confirmedLocationIds].some(ids => ids.length > 100 || !ids.every(id => string(id, 200)))) return null;
+    const existingIds = new Set(schedule.map(item => item.id));
+    const scheduleIds = [...new Set(settings.scheduleIds as string[])].filter(id => existingIds.has(id));
+    const sharedIds = new Set(scheduleIds);
+    guestSettings = { scheduleIds, confirmedLocationIds: [...new Set(settings.confirmedLocationIds as string[])].filter(id => sharedIds.has(id)) };
+  }
   return {
     brief: { family: b.family as string, organizer: b.organizer as string, email: b.email as string, date: b.date as string, needs: b.needs as string, notes: b.notes as string, guests: b.guests as number, dinnerGuests: b.dinnerGuests as number, rooms: b.rooms as number, nights: b.nights as number, budget: b.budget as number, hotelBudget: b.hotelBudget as number, style: b.style as Brief['style'] },
-    selected: [...new Set(w.selected as string[])], completed: [...new Set(w.completed as string[])], quotes, schedule, guestMessage: w.guestMessage, created: w.created, drafts,
+    selected: [...new Set(w.selected as string[])], completed: [...new Set(w.completed as string[])], quotes, schedule, guestMessage: w.guestMessage, created: w.created, drafts, ...(guestSettings ? { guestSettings } : {}),
   };
 }
 
 function positive(value: number) { return Number.isFinite(value) ? Math.max(0, value) : 0; }
 
+export type VendorAssessment = {
+  status: 'research-lead' | 'mismatch';
+  reasons: string[];
+  unresolved: string[];
+  score: number;
+};
+
+/** Assess documented constraints, not availability or an all-purpose "fit". */
+export function assessVendor(vendor: Vendor, brief: Brief, evidence: VendorEvidence | undefined = getVendorEvidence(vendor.id)): VendorAssessment {
+  const reasons: string[] = [], unresolved: string[] = [];
+  let mismatch = false, score = 0;
+  const offsiteMeal = evidence?.mealService === 'offsite' || vendor.id === 'zoccolis';
+  const count = positive(vendor.category === 'restaurant' && !offsiteMeal ? brief.dinnerGuests : brief.guests);
+  const countLabel = vendor.category === 'restaurant' && !offsiteMeal ? 'welcome-dinner guests' : 'reunion guests';
+
+  if (vendor.category === 'hotel') {
+    if (brief.rooms === 0) {
+      mismatch = true;
+      reasons.push('No overnight rooms requested. This lodging lead is not needed for the current brief.');
+    } else if (evidence?.hotelRooms !== undefined && evidence.hotelRooms < brief.rooms) {
+      mismatch = true;
+      reasons.push(`The published property inventory is ${evidence.hotelRooms} rooms; your request is for ${brief.rooms}. Split the room block across properties or change the request.`);
+    } else {
+      if (evidence?.hotelRooms !== undefined) reasons.push(`The property lists ${evidence.hotelRooms} rooms in total. This is inventory, not the number available to your group.`);
+      unresolved.push(`Confirm a block of ${brief.rooms} rooms for ${brief.nights} nights, room types, booking cutoffs, and responsibility for unbooked rooms.`);
+    }
+    unresolved.push(`Your lodging target is ${money(brief.hotelBudget)} per room per night. Obtain a dated rate and itemize taxes and mandatory fees before comparing it with your target.`);
+  } else {
+    // Room-specific evidence can support an inquiry, but one room is never used
+    // as the ceiling for a larger restaurant or property.
+    const layouts = evidence?.capacity?.filter(item => item.format !== 'rooms' && (vendor.category !== 'restaurant' || offsiteMeal || item.format === 'seated')) ?? [];
+    const entireListing = layouts.filter(item => item.matchScope === 'entire-listing');
+    const ceiling = vendor.capacity ?? (entireListing.length ? Math.max(...entireListing.map(item => item.guests)) : null);
+    if (ceiling !== null && ceiling < count) {
+      mismatch = true;
+      reasons.push(`The published capacity is ${ceiling}; your request is for ${count} ${countLabel}. Reduce this event's headcount or choose a larger option.`);
+    } else if (ceiling !== null) {
+      score += 3;
+      reasons.push(`The published capacity of ${ceiling} covers your ${count} ${countLabel}. Confirm the exact layout and permitted use.`);
+    } else {
+      const layout = layouts.find(item => item.guests >= count);
+      if (layout) {
+        score += 2;
+        reasons.push(`${layout.label} lists ${layout.guests} ${layout.format === 'seated' ? 'seated guests' : 'guests'}; ask whether that layout can accommodate your ${count} ${countLabel}.`);
+      } else {
+        unresolved.push(`${offsiteMeal ? 'Catering quantities' : 'Capacity'} for ${count} ${countLabel} is not verified. Confirm ${offsiteMeal ? 'portions and fulfillment' : 'the exact space and layout'} before treating this as a suitable choice.`);
+      }
+    }
+    if (offsiteMeal) reasons.push('Off-site catering lead: food for your gathering, not a restaurant reservation.');
+    unresolved.push(`Request an itemized event quote against your ${money(brief.budget)} shared budget (${money(brief.budget / Math.max(brief.guests, 1))} per reunion guest for all shared activities). No event quote is recorded in this research.`);
+  }
+
+  const minimum = evidence?.budget?.minimum;
+  if (minimum && minimum.amount >= 0) {
+    const applicable = minimum.appliesTo === 'lodging' ? vendor.category === 'hotel' && brief.rooms > 0 : vendor.category !== 'hotel';
+    if (applicable) {
+      const multiplier = minimum.basis === 'per-person' ? (minimum.appliesTo === 'dinner' ? brief.dinnerGuests : brief.guests) : 1;
+      const minimumTotal = minimum.amount * multiplier;
+      const target = minimum.appliesTo === 'lodging' ? brief.hotelBudget : brief.budget;
+      reasons.push(`Published ${minimum.appliesTo === 'lodging' ? 'nightly room minimum' : 'applicable minimum'}: ${money(minimumTotal)}${minimum.appliesTo === 'lodging' ? ' per room' : ''}. ${evidence?.budget?.note || ''}`);
+      if (target < minimumTotal) {
+        mismatch = true;
+        reasons.push(`That published minimum exceeds your ${money(target)} ${minimum.appliesTo === 'lodging' ? 'nightly room target' : 'total shared-event budget'}.`);
+      }
+    }
+  } else if (evidence?.budget?.kind === 'published') {
+    reasons.push(`Published price reference: ${evidence.budget.note} This does not establish an all-in quote or budget fit.`);
+  }
+
+  const text = `${vendor.name} ${vendor.description} ${vendor.highlights.join(' ')}`.toLowerCase();
+  const stylePattern = brief.style === 'beach' ? /beach|coast|waterfront|ocean/ : brief.style === 'redwoods' ? /redwood|forest|picnic|park/ : /resort|hotel|staff|indoor/;
+  if (stylePattern.test(text)) {
+    score += 2;
+    reasons.push(`A ${brief.style === 'redwoods' ? 'redwood or picnic' : brief.style === 'resort' ? 'hotel or indoor' : 'coastal'} setting to consider for your preferred weekend style.`);
+  }
+
+  if (brief.needs.trim()) {
+    const needsAccess = /wheelchair|step[ -]?free|accessib|mobility|walker|stairs|stair|scooter/i.test(brief.needs);
+    if (needsAccess && evidence?.accessibility.status === 'documented-features') {
+      score += 2;
+      reasons.push(`Published access features: ${evidence.accessibility.details.join(' ')} These features do not confirm every route, room, or individual need.`);
+    }
+    unresolved.push(`Get a specific provider response to your family's needs: ${brief.needs.trim()}`);
+  }
+  unresolved.push(brief.date ? `Availability beginning ${dateLabel(brief.date)} is unverified; ask the provider for written confirmation.` : 'Choose possible dates and ask the provider about availability.');
+  return { status: mismatch ? 'mismatch' : 'research-lead', reasons, unresolved, score: mismatch ? -1 : score };
+}
+
 export function recommendVendors(vendors: Vendor[], brief: Brief): Vendor[] {
-  return vendors.filter(vendor => {
-    if (vendor.category === 'hotel') return true;
-    const count = vendor.category === 'restaurant' ? brief.dinnerGuests : brief.guests;
-    return vendor.capacity === null || vendor.capacity >= positive(count);
-  }).sort((a, b) => {
-    const score = (vendor: Vendor) => {
-      const text = `${vendor.name} ${vendor.description} ${vendor.highlights.join(' ')}`.toLowerCase();
-      const keywords = brief.style === 'beach' ? /beach|coast|waterfront|ocean/ : brief.style === 'redwoods' ? /redwood|forest|picnic|park/ : /resort|hotel|staff|indoor/;
-      return (keywords.test(text) ? 2 : 0) + (vendor.capacity !== null ? 1 : 0);
-    };
-    return score(b) - score(a);
-  });
+  return vendors.map(vendor => ({ vendor, assessment: assessVendor(vendor, brief) }))
+    .filter(({ assessment }) => assessment.status !== 'mismatch')
+    .sort((a, b) => b.assessment.score - a.assessment.score)
+    .map(({ vendor }) => vendor);
+}
+
+/** Old backups lack costType: preserve their lodging treatment until edited. */
+export function quoteCostType(quote: Quote, vendors: Vendor[]): 'event' | 'lodging' {
+  return quote.costType ?? (vendors.find(vendor => vendor.id === quote.vendorId)?.category === 'hotel' ? 'lodging' : 'event');
+}
+
+export type QuoteBucket = {
+  estimated: number; quoted: number; confirmed: number;
+  /** All saved amounts; does not imply paid, accepted, or additional line items. */
+  recorded: number;
+  /** Quoted and confirmed amounts, excluding organizer estimates. */
+  documented: number;
+  /** Recorded deposit requirements, not evidence that a payment happened. */
+  deposits: number;
+};
+
+export function quoteTotals(quotes: Quote[], vendors: Vendor[]): { event: QuoteBucket; lodging: QuoteBucket } {
+  const bucket = (): QuoteBucket => ({ estimated: 0, quoted: 0, confirmed: 0, recorded: 0, documented: 0, deposits: 0 });
+  const totals = { event: bucket(), lodging: bucket() };
+  for (const quote of quotes) {
+    if (quote.includedInBudget === false) continue;
+    const group = totals[quoteCostType(quote, vendors)];
+    const amount = positive(quote.amount);
+    group.recorded += amount;
+    group[quote.status === 'estimate' ? 'estimated' : quote.status] += amount;
+    if (quote.status !== 'estimate') group.documented += amount;
+    group.deposits += Math.min(positive(quote.deposit), amount);
+  }
+  return totals;
 }
 
 export function suggestTasks(brief: Brief): { id: string; title: string; detail: string }[] {
@@ -133,7 +263,7 @@ export function suggestTasks(brief: Brief): { id: string; title: string; detail:
     { id: 'dates', title: brief.date ? 'Confirm the dates with your family' : 'Choose a weekend together', detail: brief.date ? `Your current start date is ${dateLabel(brief.date)}. Check with key households before requesting firm quotes.` : 'Offer your family two or three date options before making commitments.' },
     { id: 'headcount', title: 'Get a first headcount', detail: `Start with ${brief.guests} reunion guests, ${brief.dinnerGuests} at dinner, and ${brief.rooms} hotel rooms. These are separate counts.` },
     { id: 'venue', title: brief.style === 'beach' ? 'Check the beach gathering process' : brief.style === 'redwoods' ? 'Find your group picnic space' : 'Request an event-space proposal', detail: 'Confirm capacity, access, rules, fees, setup, and an alternative for poor weather. A recommendation is not a reservation.' },
-    { id: 'hotel', title: 'Request comparable hotel quotes', detail: `Ask about ${brief.rooms} rooms for ${brief.nights} nights, targeting ${money(brief.hotelBudget)} per room per night. Confirm taxes, parking, room-block terms, and cutoffs.` },
+    ...(brief.rooms > 0 ? [{ id: 'hotel', title: 'Request comparable hotel quotes', detail: `Ask about ${brief.rooms} rooms for ${brief.nights} nights, targeting ${money(brief.hotelBudget)} per room per night. Confirm taxes, parking, room-block terms, and cutoffs.` }] : []),
     { id: 'dinner', title: 'Find the right welcome dinner', detail: `Contact restaurants for ${brief.dinnerGuests} guests. Ask for an all-in proposal including service charges and minimum spend.` },
     { id: 'budget', title: 'Replace estimates with actual quotes', detail: `Your shared-event target is ${money(brief.budget)}. Keep household hotel bills separate and record unknown fees.` },
     { id: 'weather', title: 'Choose a weather backup', detail: 'Keep a practical covered or indoor option. Confirm the switch deadline and any added cost.' },
@@ -146,9 +276,10 @@ export function suggestTasks(brief: Brief): { id: string; title: string; detail:
 export function inquiry(vendor: Vendor, brief: Brief): { subject: string; body: string } {
   const family = brief.family.trim() || 'our family';
   const isCatering = vendor.id === 'zoccolis';
-  const subject = `${family} reunion — ${isCatering ? 'off-site catering inquiry' : vendor.category === 'hotel' ? 'group room rates' : vendor.category === 'restaurant' ? 'group dining inquiry' : 'gathering availability'} — ${brief.date || 'flexible dates'}`.replace(/[\r\n]/g, ' ');
+  const requestLodging = vendor.category === 'hotel' && brief.rooms > 0;
+  const subject = `${family} reunion — ${isCatering ? 'off-site catering inquiry' : requestLodging ? 'group room rates' : vendor.category === 'restaurant' ? 'group dining inquiry' : 'gathering availability'} — ${brief.date || 'flexible dates'}`.replace(/[\r\n]/g, ' ');
   const timing = brief.date ? `Our reunion begins ${dateLabel(brief.date)} and we are planning ${brief.nights} night${brief.nights === 1 ? '' : 's'}.` : `Our dates are still flexible; we are planning a ${brief.nights}-night reunion and would welcome suitable date options.`;
-  const details = vendor.category === 'hotel'
+  const details = requestLodging
     ? `We expect to need approximately ${brief.rooms} rooms for ${brief.nights} nights. Our target is ${money(brief.hotelBudget)} per room per night; please specify whether taxes and fees are included. Guests would normally book and pay individually.\n\nCould you share availability, room types, all-in rates, parking and breakfast costs, minimum stay, accessible room options, and room-block terms? Please include deposits, cancellation terms, responsibility for unbooked rooms, booking cutoffs, and quote expiry.`
     : isCatering
       ? `We are considering off-site catering for approximately ${brief.guests} reunion guests. We would serve the food at our gathering location, which is still to be confirmed. This is a catering inquiry, not a request for seating at the deli. The meal date and pickup time can be discussed.\n\nCould you recommend quantities and portion sizes for bag lunches, sandwich trays or platters, and provide an itemized total including any taxes and fees? Please confirm dietary accommodations, serving supplies, order and final-count deadlines, payment and cancellation terms, pickup arrangements, and whether any delivery option is available. If we choose hot entrees or desserts, please confirm the required lead time and transport or serving instructions.`
@@ -159,3 +290,5 @@ export function inquiry(vendor: Vendor, brief: Brief): { subject: string; body: 
   const notes = brief.notes.trim() ? `\n\nAdditional context: ${brief.notes.trim()}` : '';
   return { subject, body: `Hello ${vendor.name} team,\n\nI’m organizing a reunion for ${family} in Santa Cruz. ${timing}\n\n${details}${needs}${notes}\n\nThis is an availability and pricing inquiry, not a reservation or acceptance of any terms.\n\nThank you,\n${brief.organizer.trim() || 'Reunion organizer'}${brief.email.trim() ? `\n${brief.email.trim()}` : ''}` };
 }
+import { getVendorEvidence } from './vendor-evidence';
+import type { VendorEvidence } from './vendor-evidence';

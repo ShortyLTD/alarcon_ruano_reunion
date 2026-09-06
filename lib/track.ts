@@ -7,6 +7,10 @@ export type FunnelEvent =
   | 'sample_downloaded'
   | 'kit_downloaded'
   | 'guest_guide_downloaded'
+  | 'guest_link_created'
+  | 'acquisition_inquiry_started'
+  | 'operator_brief_downloaded'
+  | 'blueprint_opened'
   | 'launch_notify_clicked';
 
 type VercelAnalytics = { va?: (event: 'event', payload: { name: string; data?: Record<string, string | number | boolean> }) => void };

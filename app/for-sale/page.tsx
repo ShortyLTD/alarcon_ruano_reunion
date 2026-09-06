@@ -1,0 +1,88 @@
+import type { Metadata } from 'next';
+import Link from 'next/link';
+import { ArrowRight, ArrowUpRight, Check, Download, FileText, MapPin, Waves } from 'lucide-react';
+import { vendors } from '@/lib/vendors';
+import { contactEmail, mailto, researchCheckedLabel, siteName } from '@/lib/site';
+import './offer.css';
+
+export const metadata: Metadata = {
+  title: { absolute: 'Own Santa Cruz Reunion Kit — $2,500 Business Asset' },
+  description: 'Acquire a working Santa Cruz reunion planning product, editable local research, source code, and operator playbook. $2,500 asking price. Explore the live product and acquisition scope.',
+  alternates: { canonical: '/for-sale' },
+  openGraph: {
+    type: 'website', url: '/for-sale', siteName,
+    title: 'A local reunion business, with the groundwork built.',
+    description: 'Santa Cruz Reunion Kit is available for acquisition. A working product, sourced local research, and an operator handover. $2,500 asking price.',
+    images: [{ url: '/images/santa-cruz-coast.jpg', width: 1100, height: 825, alt: 'Pacific waves along the Santa Cruz coast' }],
+  },
+  twitter: { card: 'summary_large_image', title: 'Own Santa Cruz Reunion Kit', description: 'A working local planning product and operator handover. $2,500 asking price.', images: ['/images/santa-cruz-coast.jpg'] },
+};
+
+const assets = [
+  { number: '01', title: 'The working planning product', description: 'A guided organizer brief, local shortlist, editable provider inquiries, quote comparison, weekend schedule, and downloadable reunion kit.', link: '/plan?start=1', action: 'Try the organizer journey' },
+  { number: '02', title: 'The Santa Cruz groundwork', description: `${vendors.length} editable provider records, official-source links, check dates, group-planning considerations, and local guides for hotels, dining, and venues.`, link: '/guides', action: 'Inspect the local research' },
+  { number: '03', title: 'The guest experience', description: 'A designed family-facing guide, a shareable guest snapshot, calendar download, and invitation text. Keep private budgets and provider negotiations out of what relatives receive.', link: '/plan', action: 'Explore the guest guide' },
+  { number: '04', title: 'The foundation you can own', description: 'Seller-owned application source and editorial content, an asset inventory, setup instructions, and a practical first-month operating plan. Transfer scope agreed in writing.', link: '/operator-brief.pdf', action: 'Download the operator brief', download: true },
+];
+
+const models = [
+  { number: 'A', title: 'Add a reunion service.', for: 'Local event planners & concierges', description: 'Use the brief and research to prepare a client consultation. Bring your local relationships and judgment; charge for the assistance you actually deliver.', first: 'First offer to test: a paid planning session with a tailored provider shortlist.' },
+  { number: 'B', title: 'Make group stays easier.', for: 'Hospitality & guest-services operators', description: 'Offer families useful planning help around their stay. Adapt the public guide and local resources to your property, while keeping recommendations transparent.', first: 'First offer to test: a helpful reunion resource for existing group inquiries.' },
+  { number: 'C', title: 'Give your audience a product.', for: 'Destination publishers & local creators', description: 'Connect useful local articles to a working planning tool. Test whether your readers want a self-service kit or a referral to your planning service.', first: 'First offer to test: a sample plan shared with an existing local audience.' },
+];
+
+const faqs = [
+  ['Am I buying one reunion kit or the product itself?', 'This $2,500 asking price is for a proposed business-asset acquisition: the seller-owned application and content described in the transfer inventory. It is separate from the consumer planning kit. Final assets, rights, payment, and handover terms are agreed in writing before a sale.'],
+  ['Does it come with customers or recurring revenue?', 'No customer base, revenue, bookings, traffic level, conversion rate, or income is represented in this offer. The product is a working public preview. The buyer brings distribution, validates demand, and decides which services or products to sell.'],
+  ['How is it different from subscribing to a reunion app?', 'A reunion subscription gives you access to someone else’s product. This proposed acquisition gives you the seller-owned source and editable local content so you can operate and adapt this product. Other reunion platforms may have more mature collaboration or payment features; inspect the current release before deciding.'],
+  ['What will I need to operate it?', 'A GitHub account, a suitable Vercel hosting plan, your chosen domain, a monitored contact inbox, and someone comfortable maintaining a Next.js application. Checkout, payment processing, customer support, provider verification, and any new integrations remain the operator’s responsibility. Third-party fees are separate.'],
+  ['Are the hotels and venues partners?', 'No partnerships, exclusive rates, referral agreements, or provider endorsements transfer with this offer. Research comes from linked official sources. An operator can build relationships and keep the records current; availability, rates, capacities, and access details require provider confirmation.'],
+  ['Is the original family reunion website included?', 'No. The June 2026 family reunion is the founder’s firsthand experience and inspiration. The original family domain, private guest information, personal media, and historical website are excluded. Any permission to continue using the founder case study must be agreed separately.'],
+];
+
+export default function ForSalePage() {
+  const inquiry = mailto('Santa Cruz Reunion Kit — $2,500 acquisition inquiry', 'Hi Jason,\n\nI reviewed the Santa Cruz Reunion Kit acquisition offer.\n\nMy business / website:\nHow I would use the product:\nThe audience or customers I already reach:\nMy questions about the transfer:\n\nPlease send the asset inventory and proposed handover terms.\n');
+  return <div className="marketing acquisition-page">
+    <a className="mk-skip" href="#main">Skip to content</a>
+    <header className="mk-nav"><Link href="/" className="brand"><span className="brand-icon"><Waves size={24}/></span><span>Santa Cruz<span className="brand-sub">REUNION KIT</span></span></Link><nav aria-label="Main navigation"><a href="#assets">The assets</a><a href="#handover">Handover</a><Link href="/plan" className="mk-nav-plan">Try the product <ArrowRight size={15}/></Link></nav></header>
+    <main id="main">
+      <section className="acq-hero mk-wrap">
+        <div className="acq-hero-copy">
+          <p className="mk-label">AVAILABLE FOR ACQUISITION · SANTA CRUZ, CA</p>
+          <h1>Your next local business.<br/><em>The groundwork is built.</em></h1>
+          <p className="acq-lede">Help families turn “we should get everyone together” into a real Santa Cruz weekend. Acquire the planning product, the local research, and the playbook to make it yours.</p>
+          <div className="acq-price-line"><strong>$2,500</strong><span>One-time asking price<br/>For the business assets</span></div>
+          <div className="acq-actions"><a href="#inquire" className="mk-button">Explore the acquisition <ArrowRight size={18}/></a><Link href="/blueprint" className="acq-text-link">Inspect the 100-person weekend <ArrowUpRight size={17}/></Link></div>
+          <p className="acq-small">For a local planner, hospitality operator, or destination publisher ready to put it to work.</p>
+        </div>
+        <figure className="acq-hero-art">
+          <img src="/images/santa-cruz-coast.jpg" width="1100" height="825" alt="Waves rolling against the cliffs on the Santa Cruz coast" fetchPriority="high"/>
+          <figcaption><MapPin size={13}/> A LOCAL PRODUCT. A PLACE PEOPLE COME TOGETHER.</figcaption>
+          <div className="acq-asset-note"><span className="acq-note-label">THE ACQUISITION AT A GLANCE</span><p>A product you can<br/>open, inspect, and own.</p><ul><li><Check size={16}/> Live organizer workflow</li><li><Check size={16}/> Editable local research</li><li><Check size={16}/> Application source + handover</li></ul><a href="/operator-brief.pdf" download>Read the operator brief <Download size={15}/></a></div>
+        </figure>
+      </section>
+
+      <div className="acq-facts"><div className="mk-wrap"><p><strong>Working product</strong><span>Publicly available to inspect</span></p><p><strong>{vendors.length} local options</strong><span>Official sources, editable records</span></p><p><strong>Source included</strong><span>Next.js · GitHub · Vercel</span></p><p><strong>Early-stage asset</strong><span>Demand and revenue unvalidated</span></p></div></div>
+
+      <section className="acq-blueprint-proof mk-wrap" aria-labelledby="acq-blueprint-title"><div><p className="mk-label">SEE WHAT LOCAL KNOWLEDGE BECOMES</p><h2 id="acq-blueprint-title">100 people. A real starting plan.</h2><p>A picnic site, a published catering menu, a three-day schedule, and a booking order you can inspect. Change the headcount and see the planning arithmetic respond.</p><Link href="/blueprint" className="acq-text-link">Explore the researched weekend <ArrowRight size={16}/></Link></div><div className="acq-blueprint-total"><p>EXAMPLE PUBLISHED BASE COSTS</p><strong>$1,922</strong><span>$327 nonresident picnic-site fee<br/>+ $1,595 for 100 bag lunches</span><small>Base subtotal only. Taxes, other fees, permits, staffing, transport, lodging, and other meals are not included. Availability and complete terms need confirmation. Sources and assumptions are shown in the blueprint.</small></div></section>
+
+      <section className="acq-section mk-wrap acq-assets" id="assets" aria-labelledby="assets-title">
+        <div className="acq-section-heading"><p className="mk-label">OPEN THE DRAWERS BEFORE YOU BUY</p><h2 id="assets-title">The product is here.<br/>Go put it through its paces.</h2><p>Follow an organizer from the first question to a usable reunion packet. Then inspect the research and the proposed transfer scope.</p></div>
+        <div className="acq-asset-grid">{assets.map(asset=><article key={asset.number}><span className="acq-number">{asset.number}</span><h3>{asset.title}</h3><p>{asset.description}</p>{asset.download ? <a className="acq-text-link" href={asset.link} download>{asset.action}<Download size={16}/></a> : <Link className="acq-text-link" href={asset.link}>{asset.action}<ArrowRight size={16}/></Link>}</article>)}</div>
+      </section>
+
+      <section className="acq-proof-band"><div className="mk-wrap acq-proof"><figure><img src="/images/our-family-reunion.webp" alt="The original June 2026 Alarcon Ruano family reunion website" width="1348" height="926" loading="lazy"/><figcaption>The original family guest website · June 2026</figcaption></figure><div><p className="mk-label">A REAL WEEKEND STARTED THIS</p><h2>Built from the work<br/>of bringing a family together.</h2><p>Jason La Barbera helped organize a Santa Cruz reunion for around 100 relatives. The June 5–7, 2026 weekend had a guest website, a schedule, local recommendations, and time together by the coast.</p><p>This product was built afterward to turn that experience into useful tools for the next organizer.</p><Link href="/our-reunion" className="acq-text-link">See the original reunion story <ArrowRight size={16}/></Link><small>Founder experience, not a customer result. The original family website and private guest information are excluded from the acquisition.</small></div></div></section>
+
+      <section className="acq-section mk-wrap" aria-labelledby="operator-title"><div className="acq-section-heading"><p className="mk-label">YOUR ADVANTAGE IS WHAT YOU BRING</p><h2 id="operator-title">A stronger fit when you<br/>already know the people.</h2><p>The best owner has local knowledge, a useful audience, or customers who already ask for planning help. Three practical ways to put the product to work:</p></div><div className="acq-models">{models.map(model=><article key={model.number}><span className="acq-model-letter">{model.number}</span><p className="acq-model-audience">{model.for}</p><h3>{model.title}</h3><p>{model.description}</p><div className="acq-model-first">{model.first}</div></article>)}</div><p className="acq-model-note">These are operating ideas to validate with real buyers, not existing revenue streams or earnings projections.</p></section>
+
+      <section className="acq-handover" id="handover"><div className="mk-wrap acq-handover-grid"><div className="acq-section-heading"><p className="mk-label">A CLEAR TRANSFER, WITH A CLEAR START</p><h2>Know what you get.<br/>Know what comes next.</h2><p>The asking price covers the proposed asset package. Before a sale, we agree on the exact inventory, rights, delivery, and acceptance checks.</p><a href="/operator-brief.pdf" download className="acq-text-link"><FileText size={17}/> Download the operator brief</a></div><div className="acq-transfer-list"><article><span>01</span><div><h3>Inspect the product and assets.</h3><p>Try the organizer flow, read the local guides, inspect a sample packet, and review the documented gaps. Request source review and the transfer inventory.</p></div></article><article><span>02</span><div><h3>Agree on the handover.</h3><p>Define the seller-owned files and content, any case-study permissions, the supported deployment, acceptance checks, and any transition assistance in writing.</p></div></article><article><span>03</span><div><h3>Deploy under your control.</h3><p>Use your GitHub, hosting account, domain, and contact address. Follow the setup and release checklist. The buyer controls the product after the agreed transfer.</p></div></article><article><span>04</span><div><h3>Start with five real organizers.</h3><p>The first-month playbook covers customer observation, research updates, a bounded offer, and measuring actual purchase and delivery. Build from evidence.</p></div></article></div></div></section>
+
+      <section className="acq-section mk-wrap acq-scope" aria-labelledby="scope-title"><div className="acq-section-heading"><p className="mk-label">THE DEAL, IN PLAIN ENGLISH</p><h2 id="scope-title">A working starting point.<br/>The operator role is yours.</h2></div><div className="acq-scope-grid"><article><h3>Proposed acquisition includes</h3><ul><li>Seller-owned application source in a transferable repository snapshot</li><li>Editable provider research and original planning-guide content</li><li>Organizer, inquiry, quote, schedule, and guest-delivery workflows in the reviewed release</li><li>Setup documentation, transfer checklist, and 30-day operating playbook</li></ul></article><article><h3>Scope to understand before buying</h3><ul><li>No represented customer base, revenue, bookings, or traffic level</li><li>Domain purchase, hosting, payment fees, maintenance, and customer support are separate</li><li>Consumer checkout and paid delivery require operator setup; provider bookings stay direct</li><li>No transfer of private family data, personal accounts, the original family domain, or third-party rights</li></ul></article></div><p className="acq-small">Third-party software and imagery retain their existing license terms. Final rights, exclusivity, transition help, and purchase terms must be established in the acquisition agreement.</p></section>
+
+      <section className="mk-wrap acq-faq"><div><p className="mk-label">BEFORE YOU MAKE AN OFFER</p><h2>Good questions.<br/>Straight answers.</h2></div><div>{faqs.map(([question,answer])=><details key={question}><summary>{question}<span aria-hidden="true">+</span></summary><p>{answer}</p></details>)}</div></section>
+
+      <section className="acq-inquire" id="inquire"><div className="mk-wrap"><div><p className="mk-label">COULD THIS BE YOUR NEXT OFFER?</p><h2>Bring your local edge.<br/>Make this yours.</h2><p>Tell Jason who you serve and how you would use the product. Start with the asset inventory and handover discussion.</p><p className="acq-inquire-price"><strong>$2,500</strong><span>One-time asking price for the business assets.</span></p></div><div className="acq-inquire-actions">{contactEmail ? <><a href={inquiry} className="mk-button mk-button-cream">Ask Jason about the acquisition <ArrowRight size={18}/></a><small>Opens an editable email draft. Nothing is sent automatically.</small></> : <><a href="/operator-brief.pdf" download className="mk-button mk-button-cream">Download the acquisition brief <Download size={18}/></a><small>Review the scope and questions before a seller conversation.</small></>}<a href="/operator-brief.pdf" download className="acq-inquire-secondary">Download the operator brief (PDF) <Download size={16}/></a><Link href="/plan?start=1" className="acq-inquire-secondary">Try the live product first <ArrowUpRight size={16}/></Link></div></div></section>
+    </main>
+    <footer className="mk-footer mk-wrap"><div><Link href="/" className="brand">Santa Cruz<span className="brand-sub">REUNION KIT</span></Link><p>Made for getting together.</p></div><nav aria-label="Footer navigation"><Link href="/plan">Live planner</Link><Link href="/guides">Local guides</Link><Link href="/our-reunion">Founder story</Link><Link href="/your-data">Your data</Link>{contactEmail && <a href={inquiry}>Contact Jason</a>}</nav><small>Research checked {researchCheckedLabel}. An acquisition proposal; no transaction is completed on this page. Photo: <a href="https://unsplash.com/photos/qR5wQNyDA1s" target="_blank" rel="noreferrer">Sean Kelley</a>.</small></footer>
+  </div>;
+}

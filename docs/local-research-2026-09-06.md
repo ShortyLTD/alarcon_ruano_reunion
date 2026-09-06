@@ -1,0 +1,38 @@
+# Local decision evidence — September 6, 2026
+
+The directory now has 14 providers: six hotels, four food providers and four gathering venues. `lib/vendor-evidence.ts` carries the decision evidence separately from the concise public directory. The decision summaries and booking sequence are our synthesis; linked facts come from official provider or government sources. No provider has confirmed availability for a customer's dates, and no personal vetting, partnership or negotiated discount is claimed.
+
+## A demonstrable 100-person plan
+
+The strongest current example is a defined picnic with a smaller welcome dinner. It is a proposed planning route, not a completed reservation.
+
+1. Request **DeLaveaga Park — Forty Thieves** for the main gathering, capped at 100. Ask the City reservation office about the exact date, layout, access route and any activity-specific permits. The City publishes accessible bathrooms and parking at this site. [City picnic directory](https://www.santacruzca.gov/Government/City-Departments/Parks-Recreation/Events/Reservation-Office-Event-Permits/Private-Events-Reservations/Picnic-Areas)
+2. Use the current site fee as a budget reference: **$251/day for City residents or $327/day for nonresidents**. City residency means within the City of Santa Cruz, not anywhere in Santa Cruz County. The fee schedule is effective January 5, 2026; additional permits or deposits can apply. The [official fee schedule, page 2](https://www.santacruzca.gov/files/assets/city/v/4/pr/documents/fees-pr-facilities-effective-jan-5-2026v5.pdf) and [City facility catalog](https://casantacruzweb.myvscloud.com/webtrac/web/iteminfo.html?FMID=151327&Module=FR) corroborate the base rate.
+3. Request a dated **Zoccoli's bag-lunch order**. The menu reference is $15.95 per lunch, making 100 lunches $1,595 before tax and other charges. Quantity, dietary handling, pickup and order deadline still need confirmation. The 48-hour notice on the menu applies to hot entrees and desserts; do not mislabel it as the bag-lunch deadline. [Official catering menu](https://www.zoccolis.com/catering)
+4. Show **$1,846 resident / $1,922 nonresident** as the arithmetic subtotal of site plus 100 menu-priced lunches. This deliberately excludes taxes, extra permits, supplies, transport, additional food/drinks, welcome dinner and lodging. It is not an all-in reunion price and should never be displayed as an accepted quote.
+5. For a **40-person welcome dinner**, ask for the Crow's Nest Harbor Room. Its published seated ceiling is 50. A downstairs room does not establish a step-free route; ask about entrance, table and restroom access. [Official Harbor Room description](https://crowsnest-santacruz.com/), [official group inquiry](https://crowsnest-santacruz.com/santa-cruz-the-crows-nest-party)
+6. Compare room blocks across Hampton Santa Cruz, Hyatt Place Santa Cruz and Fairfield Santa Cruz–Capitola alongside the existing resorts. None is labeled as meeting a nightly budget without a date-specific quote. Included breakfast/parking, suite occupancy, accessible room types, block liability and release dates are useful comparison dimensions that do not require invented rates.
+
+## Material discoveries
+
+- **The hotel shortlist now includes practical alternatives.** Hampton publishes a 10–25-room online block route and a hotel attendee booking page; free breakfast and self-parking are listed. These are Hilton's tools, not features we claim to operate. [Hotel group route](https://www.hilton.com/en/hotels/sruhhhx-hampton-santa-cruz/), [included amenities and direct contact](https://www.hilton.com/en/hotels/sruhhhx-hampton-santa-cruz/hotel-info/)
+- **Suites and event seats are different inventories.** Fairfield Capitola publishes 84 suites and a 70-seat banquet room. It may be a lodging candidate for a 100-person reunion, but that room is not a 100-person indoor event venue. [Suites and block route](https://www.marriott.com/en-us/hotels/sjccp-fairfield-inn-and-suites-santa-cruz-capitola/rooms/), [event chart](https://www.marriott.com/en-us/hotels/sjccp-fairfield-inn-and-suites-santa-cruz-capitola/events/)
+- **The most useful accessibility evidence is specific.** Hyatt Place lists routes to guestrooms, dining and meeting areas and accessible public restrooms. Dream Inn lists routes to event rooms, accessible public restrooms and pool lifts. These statements support questions about exact configurations and availability; they do not certify universal suitability. [Hyatt features](https://www.hyatt.com/hyatt-place/en-US/sjczs-hyatt-place-santa-cruz/hotel-info), [Dream Inn features](https://www.dreaminnsantacruz.com/accessibility)
+- **Room configuration matters.** Shadowbrook's Wine Cellar is a 35-seat room; larger parties need a different or combined arrangement. Seascape's Pacific Room lists 110 at rounds, versus Bayview's 70. Match the reserved layout, not the property's marketing description. [Shadowbrook layouts](https://shadowbrook-capitola.com/private-events/), [Seascape capacities](https://seascaperesort.com/meetings-conferences)
+- **An online reservation can be only a waiting-list entry.** Hindquarter explicitly instructs guests to call to confirm. The directory now surfaces this instead of implying a completed restaurant booking. [Official instructions](https://www.thehindquarter.com/)
+- **A beach plan requires a real access route.** Twin Lakes lists free beach-wheelchair access with advance reservation recommended. Seacliff lists accessible picnic sites in its South End area, while parts of the southern promenade use aggregate/native-soil reroutes. The campground remains closed. [Twin Lakes access](https://www.parks.ca.gov/AccessibleFeatures/Details/547), [Seacliff access](https://www.parks.ca.gov/AccessibleFeatures/Details/543), [current Seacliff park information](https://www.parks.ca.gov/SeacliffStateBeach)
+
+## Value for an operator buying the asset
+
+The useful asset is the connection between sourced local facts and repeatable customer decisions: capacity-by-layout, fee-by-unit, an arrival/access checklist, comparable provider questions, a booking sequence and an editable plan. The operator can inspect the evidence, refresh individual records and see what still requires a real provider reply.
+
+This does **not** establish customer acquisition, conversion, revenue, exclusive vendor access or willingness to pay $2,500 for the business asset. Position the asking price around the inspectable working product, code and operating materials; label commercial projections as assumptions. The defensible advantage over a general reunion organizer is local execution depth, which should be demonstrated in the 100-person scenario rather than asserted as an unsupported superiority claim.
+
+## Evidence boundaries
+
+- All `checkedAt` values mean an official page was checked, not that a provider answered or a booking was verified.
+- Capacity entries carry `matchScope`. A single room's capacity must not disqualify an entire hotel's lodging inventory or imply the property's maximum capacity.
+- Menu and entry amounts retain their units. A $10 park vehicle-entry charge is not a $10 reunion venue rental; a $15.95 menu item is not a full event minimum.
+- `budget.minimum` is intentionally unused until a current, applicable minimum is explicitly documented.
+- No average nightly hotel prices are fabricated from brand positioning or search snippets.
+- Publicly available State Parks event guidance currently linked from the 2026 park pages includes a PDF titled 2023. We link the current park application route and ask the event office to confirm terms instead of labeling the old guidance as new 2026 rules.
