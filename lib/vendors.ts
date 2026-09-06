@@ -36,11 +36,11 @@ export const vendors: Vendor[] = [
   {
     id: 'shadowbrook', name: 'Shadowbrook Restaurant', category: 'restaurant',
     location: '1750 Wharf Road, Capitola, CA',
-    description: 'Creekside private dining in several distinctive rooms. The Wine Cellar seats up to 35; larger parties may use multiple rooms by arrangement.',
+    description: 'Creekside private dining with room-specific layouts. The Wine Cellar seats up to 35; the restaurant describes arrangements for 50+ across multiple rooms. Ask which configuration fits your family.',
     capacity: null, email: 'banquets@shadowbrook-capitola.com',
     url: 'https://shadowbrook-capitola.com/private-events/',
     priceNote: 'Private-event menus, guest minimums and prices are available by inquiry. Request the full price including taxes and service charges.',
-    highlights: ['Four private dining rooms', 'Groups over 16 use banquet coordination', 'Confirm a single-room or multi-room layout'],
+    highlights: ['Wine Cellar: up to 35 seated', 'Redwood Room: 17–26 seated, depending on layout', 'Owner’s Private Reserve: up to 16 seated', '50+ across rooms; confirm configuration and exclusive use', 'Banquet inquiries: 831-475-1222'],
     source: 'https://shadowbrook-capitola.com/private-events/', checkedAt: '2026-09-06',
   },
   {
@@ -80,7 +80,7 @@ export const vendors: Vendor[] = [
     capacity: 100, email: 'parksandrec@santacruzca.gov',
     url: 'https://www.santacruzca.gov/Government/City-Departments/Parks-Recreation/Events/Reservation-Office-Event-Permits/Private-Events-Reservations/Picnic-Areas',
     priceNote: 'Confirm the current fee and available date with City Parks. Rate categories and added permits can change the total.',
-    highlights: ['Capacity: 100', 'Grills and picnic tables', 'George Washington Grove closes November 1 through March 1'],
+    highlights: ['Capacity: 100', 'Grills and picnic tables', 'Confirm Forty Thieves access and reservation hours'],
     source: 'https://www.santacruzca.gov/Government/City-Departments/Parks-Recreation/Parks-Beaches-Open-Spaces/Parks/DeLaveaga-Park', checkedAt: '2026-09-06',
   },
   {
@@ -106,11 +106,11 @@ export const vendors: Vendor[] = [
   {
     id: 'zoccolis', name: "Zoccoli’s Deli — Picnic Catering", category: 'restaurant',
     location: '1534 Pacific Avenue, Santa Cruz, CA 95060',
-    description: 'Downtown deli with a catering menu: a useful lead for a picnic meal or welcome lunch. Call 831-423-1711 to discuss the order.',
+    description: 'Off-site food for a reunion picnic or welcome lunch, with bag lunches, sandwich trays and platters. Call 831-423-1711 to arrange quantities and pickup; this is a catering lead, not a seated group venue.',
     capacity: null,
     url: 'https://www.zoccolis.com/catering',
-    priceNote: 'Confirm current catering prices, order lead time, portions, dietary needs and pickup or delivery arrangements by phone.',
-    highlights: ['Catering menu available', 'Downtown pickup location', 'Picnic-food option; no group seating capacity confirmed'],
+    priceNote: 'Menu checked September 6, 2026: bag lunch $15.95; tray of 20 half sandwiches $109; meat-and-cheese platter $75 (serves 15–20). Reference menu prices, not an all-in group quote. Confirm portions, taxes, fees and current prices.',
+    highlights: ['Off-site catering; confirm pickup or any delivery option', '20 half sandwiches are not 20 full sandwiches', 'Hot entrees and desserts require 48 hours’ notice', 'Confirm dietary needs, serving supplies and order deadline'],
     source: 'https://www.zoccolis.com/catering', checkedAt: '2026-09-06',
   },
 ];
