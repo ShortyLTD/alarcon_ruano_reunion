@@ -23,7 +23,7 @@ export type ScheduleItem = {
 
 export type Workspace = {
   brief: Brief; selected: string[]; completed: string[]; quotes: Quote[];
-  schedule: ScheduleItem[]; guestMessage: string; created: boolean;
+  schedule: ScheduleItem[]; guestMessage: string; created: boolean; drafts?: Record<string, string>;
 };
 
 export const defaultBrief: Brief = {
@@ -64,7 +64,7 @@ export function makeSchedule(brief: Brief): ScheduleItem[] {
 
 export const defaultWorkspace: Workspace = {
   brief: { ...defaultBrief }, selected: [], completed: [], quotes: [],
-  schedule: makeSchedule(defaultBrief), guestMessage: '', created: false,
+  schedule: makeSchedule(defaultBrief), guestMessage: '', created: false, drafts: {},
 };
 
 /** Validate untrusted imports and browser storage before using them as app state. */
@@ -86,6 +86,14 @@ export function parseWorkspace(value: unknown): Workspace | null {
   if (![w.selected, w.completed, w.quotes, w.schedule].every(items => items.length <= 1000)) return null;
   if (![...w.selected, ...w.completed].every(id => string(id, 200))) return null;
   if (!string(w.guestMessage) || typeof w.created !== 'boolean') return null;
+  const drafts: Record<string, string> = {};
+  if (w.drafts !== undefined) {
+    if (!record(w.drafts) || Object.keys(w.drafts).length > 100) return null;
+    for (const [id, body] of Object.entries(w.drafts)) {
+      if (!string(id, 200) || !string(body, 15000) || ['__proto__', 'prototype', 'constructor'].includes(id)) return null;
+      drafts[id] = body;
+    }
+  }
   const quotes: Quote[] = [];
   for (const q of w.quotes) {
     if (!record(q) || !['id', 'vendorId', 'deadline', 'notes'].every(key => string(q[key])) || !number(q.amount) || !number(q.deposit) || !['estimate', 'quoted', 'confirmed'].includes(String(q.status))) return null;
@@ -99,7 +107,7 @@ export function parseWorkspace(value: unknown): Workspace | null {
   }
   return {
     brief: { family: b.family as string, organizer: b.organizer as string, email: b.email as string, date: b.date as string, needs: b.needs as string, notes: b.notes as string, guests: b.guests as number, dinnerGuests: b.dinnerGuests as number, rooms: b.rooms as number, nights: b.nights as number, budget: b.budget as number, hotelBudget: b.hotelBudget as number, style: b.style as Brief['style'] },
-    selected: [...new Set(w.selected as string[])], completed: [...new Set(w.completed as string[])], quotes, schedule, guestMessage: w.guestMessage, created: w.created,
+    selected: [...new Set(w.selected as string[])], completed: [...new Set(w.completed as string[])], quotes, schedule, guestMessage: w.guestMessage, created: w.created, drafts,
   };
 }
 

@@ -141,3 +141,21 @@ test('untrusted recipient or URL cannot become an email header or executable lin
   assert.ok(![...files.keys()].some(key => key.endsWith('.eml')));
   assert.doesNotMatch(files.get('guest-guide.html'), /href="javascript:/);
 });
+
+test('edited outreach body survives backup restore and both text and email exports', async () => {
+  const state = workspace(), provider = vendor('hotel', 'hotel', null);
+  state.selected = ['hotel'];
+  state.drafts = { hotel: 'Hello team,\nPlease use our revised arrival details.\nThanks, Alex' };
+  const restored = parseWorkspace(JSON.parse(JSON.stringify(state)));
+  assert.equal(restored.drafts.hotel, state.drafts.hotel);
+  const files = await readStoredZip(createPacket(restored, [provider]));
+  assert.match(files.get('inquiries/01-hotel.txt'), /Please use our revised arrival details/);
+  const eml = files.get('inquiries/01-hotel.eml');
+  assert.equal(Buffer.from(eml.split('\r\n\r\n')[1].replace(/\s/g, ''), 'base64').toString('utf8'), state.drafts.hotel);
+  assert.equal(JSON.parse(files.get('backup.json')).drafts.hotel, state.drafts.hotel);
+  assert.equal(parseWorkspace({ ...state, drafts: { hotel: 123 } }), null);
+  assert.equal(parseWorkspace({ ...state, drafts: { hotel: 'x'.repeat(15001) } }), null);
+  assert.equal(parseWorkspace({ ...state, drafts: Object.fromEntries(Array.from({ length: 101 }, (_, i) => [`v${i}`, 'draft'])) }), null);
+  const legacy = { ...state }; delete legacy.drafts;
+  assert.deepEqual(parseWorkspace(legacy).drafts, {});
+});

@@ -110,6 +110,7 @@ export function createPacket(workspace: Workspace, vendors: Vendor[]): Blob {
   ];
   selected.forEach((v, index) => {
     const draft = inquiry(v, b), prefix = `inquiries/${String(index + 1).padStart(2, '0')}-${slug(v.name)}`;
+    if (workspace.drafts && Object.prototype.hasOwnProperty.call(workspace.drafts, v.id)) draft.body = workspace.drafts[v.id];
     files.push({ name: `${prefix}.txt`, content: `Provider: ${v.name}\nOfficial inquiry route: ${v.url}\n${v.email ? `Email: ${v.email}\n` : 'Use the official form or phone route; no provider email is recorded.\n'}Status: UNSENT DRAFT\n\nSubject: ${draft.subject}\n\n${draft.body}\n` });
     const email = emailAddress(v.email || '');
     if (email) files.push({ name: `${prefix}.eml`, content: `To: ${email}\r\nSubject: ${encodedHeader(draft.subject)}\r\nX-Unsent: 1\r\nMIME-Version: 1.0\r\nContent-Type: text/plain; charset=UTF-8\r\nContent-Transfer-Encoding: base64\r\n\r\n${base64(draft.body).match(/.{1,76}/g)?.join('\r\n') || ''}\r\n` });
