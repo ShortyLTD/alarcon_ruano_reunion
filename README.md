@@ -56,13 +56,14 @@ All settings are optional public build-time variables (set them in the Vercel pr
 
 | Variable | Purpose | Default |
 | --- | --- | --- |
-| `NEXT_PUBLIC_SITE_URL` | Canonical origin used for canonicals, Open Graph, sitemap, robots and structured data. Set this when moving to a branded domain. | `https://santa-cruz-reunion-kit.vercel.app` |
+| `NEXT_PUBLIC_SITE_URL` | Canonical origin used for canonicals, Open Graph, sitemap, robots and structured data. | `https://santacruzreunion.com` |
+| `NEXT_PUBLIC_ORIGINAL_SITE_URL` | Where the original June 2026 guest website lives (linked from /our-reunion). Set to `https://2026.santacruzreunion.com/` once that alias is configured on the Netlify site. | the guest site's Netlify URL |
 | `NEXT_PUBLIC_CONTACT_EMAIL` | Public contact address. When set, the footer shows a Contact link, the pricing card shows an "Email me when the $39 kit launches" link, and /your-data shows a data-question address. When empty these links are not rendered. | empty |
 | `NEXT_PUBLIC_VERCEL_ANALYTICS` | Set to `1` after enabling Web Analytics for the Vercel project. Loads Vercel's cookieless Web Analytics script (no npm dependency) and records funnel events: `preview_started`, `plan_built`, `inquiry_opened`, `inquiry_copied`, `sample_viewed`, `sample_downloaded`, `kit_downloaded`, `guest_guide_downloaded`. No names, emails, notes or free text are sent. /your-data discloses analytics only when this is enabled. | off |
 
 ## Deployment
 
-Vercel framework: Next.js. Build command: `npm run build`. No environment secrets are needed for this preview. Marketing and guide pages allow indexing; /plan remains noindex and crawlable. Vercel is deployed from the same authored source saved in GitHub. Automatic Git-triggered Vercel deployment is not configured.
+Vercel framework: Next.js. Build command: `npm run build`. No environment secrets are needed for this preview. Marketing and guide pages allow indexing; /plan remains noindex and crawlable. The Vercel project `alarcon_ruano_reunion` is connected to this repository: pushes to `main` deploy production at https://santacruzreunion.com (www and the *.vercel.app hosts permanently redirect there via `next.config.ts`).
 
 ## Offer and validation
 
