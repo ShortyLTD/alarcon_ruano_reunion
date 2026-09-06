@@ -85,7 +85,7 @@ Also: cookieless Vercel Web Analytics with funnel events (off until `NEXT_PUBLIC
 1. Deployment: this session's GitHub credential did not cover the repository, so the changes were committed through the GitHub web UI onto the `audit-fixes` branch and opened as a pull request. The Vercel project `santa-cruz-reunion-kit` is not connected to GitHub: merge the pull request, then connect the repository in the Vercel project settings (production branch `main`) or run `vercel --prod` from the merged checkout.
 2. Enable Web Analytics in the Vercel project and set `NEXT_PUBLIC_VERCEL_ANALYTICS=1`; set `NEXT_PUBLIC_CONTACT_EMAIL` to show contact and launch-notification links.
 3. Verify the property in Google Search Console and Bing Webmaster Tools, submit /sitemap.xml, request indexing for /, /guides and the three articles.
-4. Move to a branded domain (Vercel Pro offers a free first-year domain) and set `NEXT_PUBLIC_SITE_URL`; add a truthful link from santacruzreunion.com to /our-reunion.
+4. Branded domain: santacruzreunion.com (GoDaddy DNS) now points at the kit; www and the *.vercel.app hosts redirect to it. The original guest website moved to its Netlify URL; add the `2026.santacruzreunion.com` alias in Netlify and set `NEXT_PUBLIC_ORIGINAL_SITE_URL` so /our-reunion links to a branded address.
 5. Decide the free-preview transition policy before checkout launches; then add one sentence to the pricing card.
 
 ### Release follow-through after merge

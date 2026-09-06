@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { ArrowRight, ArrowUpRight, Waves } from 'lucide-react';
 import { guides, siteUrl } from '@/lib/guides';
+import { originalReunionSite } from '@/lib/site';
 
 export const metadata: Metadata = {
   title: { absolute: 'The Santa Cruz Family Reunion That Inspired the Kit (June 2026)' },
@@ -25,7 +26,7 @@ export const metadata: Metadata = {
   },
 };
 
-const originalSite = 'https://santacruzreunion.com/';
+const originalSite = originalReunionSite;
 const resources = [
   {
     number: '01', title: 'A weekend everyone could follow',
