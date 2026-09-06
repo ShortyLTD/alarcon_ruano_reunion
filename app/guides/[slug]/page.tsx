@@ -11,7 +11,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const guide = guides.find((item) => item.slug === slug);
   if (!guide) return {};
-  return { title: guide.title, description: guide.description, alternates: { canonical: `${siteUrl}/guides/${guide.slug}` }, robots: { index: true, follow: true }, openGraph: { title: guide.title, description: guide.description, url: `${siteUrl}/guides/${guide.slug}`, type: 'article' } };
+  return { title: guide.title, description: guide.description, alternates: { canonical: `${siteUrl}/guides/${guide.slug}` }, robots: { index: true, follow: true }, openGraph: { title: guide.title, description: guide.description, url: `${siteUrl}/guides/${guide.slug}`, type: 'article', images: [{ url: '/images/santa-cruz-coast.jpg', alt: 'Santa Cruz coast' }] } };
 }
 
 export default async function GuidePage({ params }: Props) {

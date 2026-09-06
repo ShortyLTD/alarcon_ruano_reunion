@@ -7,6 +7,7 @@ export const metadata: Metadata = {
   description: 'Practical guides to Santa Cruz reunion venues, large-group dining and hotel room blocks, with official sources and questions to ask before you book.',
   alternates: { canonical: `${siteUrl}/guides` },
   robots: { index: true, follow: true },
+  openGraph: { title: 'Santa Cruz Reunion Planning Guides', description: 'Local venues, group dining and hotel room blocks, with official sources and useful booking questions.', url: `${siteUrl}/guides`, type: 'website', images: [{ url: '/images/santa-cruz-coast.jpg', alt: 'Santa Cruz coast' }] },
 };
 
 export default function GuidesPage() {

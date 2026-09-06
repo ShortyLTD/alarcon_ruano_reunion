@@ -80,6 +80,7 @@ export function guideStructuredData(guide: PlanningGuide) {
         headline: guide.title,
         description: guide.description,
         mainEntityOfPage: url,
+        image: [`${siteUrl}/images/santa-cruz-coast.jpg`],
         dateModified: guide.checkedAt,
         author: { '@type': 'Organization', name: 'Santa Cruz Reunion Kit', url: siteUrl },
       },
