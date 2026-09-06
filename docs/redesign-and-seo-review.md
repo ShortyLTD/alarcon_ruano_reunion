@@ -87,3 +87,11 @@ Also: cookieless Vercel Web Analytics with funnel events (off until `NEXT_PUBLIC
 3. Verify the property in Google Search Console and Bing Webmaster Tools, submit /sitemap.xml, request indexing for /, /guides and the three articles.
 4. Move to a branded domain (Vercel Pro offers a free first-year domain) and set `NEXT_PUBLIC_SITE_URL`; add a truthful link from santacruzreunion.com to /our-reunion.
 5. Decide the free-preview transition policy before checkout launches; then add one sentence to the pricing card.
+
+### Release follow-through after merge
+
+The Ploy audit implementation was merged into `main` as `435c664`. The release build uses those changes, preserving the researched-provider and free-preview boundaries. A generated-HTML check caught a remaining homepage Open Graph issue: its page-level `url` override replaced the layout image metadata. The homepage now supplies complete social metadata explicitly. The hero's awkward "Answer three short steps" wording was also corrected.
+
+This release passed the production build, TypeScript checks and all 16 functional/export tests. Browser review covered the desktop homepage, mobile homepage and reunion story at 320px/390px, completion of the three-step mobile interview, persisted reunion state, personalized inquiry content, and kit-generation success feedback. Browser download-event capture timed out, so an observed completed file transfer is not claimed from this verification session; the existing tests validate generated ZIP contents and private guest exports. A temporary responsive-review page remains confined to the preview deployment.
+
+The original Chrome account connection was not available to this session; the authenticated Ploy audit and recommendations already committed in `docs/ploy-audit-2026-09-06.md` supplied the audit evidence. No new Ploy audit or measured conversion gain is claimed.
