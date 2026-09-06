@@ -1,4 +1,6 @@
-export const siteUrl = 'https://santa-cruz-reunion-kit.vercel.app';
+import { siteUrl } from './site';
+
+export { siteUrl };
 
 export type GuideSection = {
   title: string;
@@ -11,7 +13,10 @@ export type PlanningGuide = {
   title: string;
   shortTitle: string;
   description: string;
+  /** Search result title, kept under about 60 characters. */
+  seoTitle: string;
   intro: string;
+  publishedAt: string;
   checkedAt: string;
   vendorIds: string[];
   sections: GuideSection[];
@@ -25,6 +30,8 @@ export const guides: PlanningGuide[] = [
     title: 'Santa Cruz family reunion venues: beach, park or resort?',
     shortTitle: 'Choose your reunion setting',
     description: 'Compare researched Santa Cruz reunion settings, understand capacity and permit questions, and prepare a useful venue inquiry before choosing a date.',
+    seoTitle: '4 Santa Cruz Family Reunion Venues to Compare: Beach, Park, Resort',
+    publishedAt: '2026-09-06',
     intro: 'Your main gathering place shapes the rest of the weekend. Start with the people who need to fit comfortably, the meal you want to serve, and the help you need on the day. Then compare a small set of places against the same brief.',
     checkedAt: '2026-09-06',
     vendorIds: ['delaveaga', 'twin-lakes', 'roaring-camp', 'dream-inn'],
@@ -40,7 +47,9 @@ export const guides: PlanningGuide[] = [
     slug: 'santa-cruz-restaurants-for-large-groups',
     title: 'Santa Cruz restaurants for large groups: what to ask before booking',
     shortTitle: 'Find a place for the family meal',
-    description: 'A practical Santa Cruz group-dining shortlist with published capacity context, private-event contacts, catering options and a checklist for complete dinner quotes.',
+    description: 'A Santa Cruz group-dining shortlist with published capacity context, private-event contacts, catering options and a checklist for complete dinner quotes.',
+    seoTitle: 'Santa Cruz Restaurants for Large Groups: 4 Places to Ask',
+    publishedAt: '2026-09-06',
     intro: 'A restaurant that takes reservations may handle a large family dinner through a separate events team. Give that team the dinner headcount, date, time and seating preference so they can answer the questions that matter.',
     checkedAt: '2026-09-06',
     vendorIds: ['crows-nest', 'shadowbrook', 'hindquarter', 'zoccolis'],
@@ -56,7 +65,9 @@ export const guides: PlanningGuide[] = [
     slug: 'santa-cruz-hotel-room-blocks',
     title: 'Santa Cruz hotel room blocks: a reunion organizer’s inquiry checklist',
     shortTitle: 'Ask hotels for comparable quotes',
-    description: 'Prepare a Santa Cruz reunion room-block request with researched hotel contacts, the details hotels need and the questions that make group quotes easier to compare.',
+    description: 'Prepare a Santa Cruz reunion room-block request with researched hotel contacts, the details hotels need and the questions that make quotes comparable.',
+    seoTitle: 'Santa Cruz Hotel Room Blocks for Reunions: 3 Places to Ask',
+    publishedAt: '2026-09-06',
     intro: 'A useful hotel request starts with room nights, not just reunion attendance. Gather an estimated number of rooms, arrival and departure dates, preferred room types and a nightly target before contacting group sales.',
     checkedAt: '2026-09-06',
     vendorIds: ['dream-inn', 'seascape', 'chaminade'],
@@ -81,8 +92,10 @@ export function guideStructuredData(guide: PlanningGuide) {
         description: guide.description,
         mainEntityOfPage: url,
         image: [`${siteUrl}/images/santa-cruz-coast.jpg`],
+        datePublished: guide.publishedAt,
         dateModified: guide.checkedAt,
         author: { '@type': 'Organization', name: 'Santa Cruz Reunion Kit', url: siteUrl },
+        publisher: { '@id': `${siteUrl}/#organization` },
       },
       {
         '@type': 'BreadcrumbList',

@@ -5,7 +5,8 @@ A standard Next.js 16 / React 19 application for Vercel. GitHub is the source of
 ## Product
 
 - Public offer page with interactive sample and researched $39 initial pricing hypothesis.
-- Source-backed local planning guides, canonical URLs, sitemap and robots metadata.
+- Source-backed local planning guides, canonical URLs, sitemap, robots, Open Graph image and structured data (Organization, WebSite, FAQPage, Article, BreadcrumbList, CollectionPage).
+- Accessibility: WCAG AA colour contrast on marketing, guide and planner pages; named progress bars; mobile navigation links; sticky intake actions on small screens.
 
 - Three-step family intake, with optional browser dictation.
 - Personalized and editable reunion schedule.
@@ -48,6 +49,16 @@ Personalization uses deterministic planning rules based on the family brief, not
 Vendor evidence is in `lib/vendors.ts`. Hotel targets are user-entered spending goals, not researched live rates.
 
 Coastal photo: Sean Kelley, Unsplash qR5wQNyDA1s. Source: https://unsplash.com/photos/qR5wQNyDA1s . Download corroboration: https://santacruzbw.com/explore-santa-cruz/ . Unsplash License. Photographer credit appears in the app.
+
+## Configuration
+
+All settings are optional public build-time variables (set them in the Vercel project, then redeploy):
+
+| Variable | Purpose | Default |
+| --- | --- | --- |
+| `NEXT_PUBLIC_SITE_URL` | Canonical origin used for canonicals, Open Graph, sitemap, robots and structured data. Set this when moving to a branded domain. | `https://santa-cruz-reunion-kit.vercel.app` |
+| `NEXT_PUBLIC_CONTACT_EMAIL` | Public contact address. When set, the footer shows a Contact link, the pricing card shows an "Email me when the $39 kit launches" link, and /your-data shows a data-question address. When empty these links are not rendered. | empty |
+| `NEXT_PUBLIC_VERCEL_ANALYTICS` | Set to `1` after enabling Web Analytics for the Vercel project. Loads Vercel's cookieless Web Analytics script (no npm dependency) and records funnel events: `preview_started`, `plan_built`, `inquiry_opened`, `inquiry_copied`, `sample_viewed`, `sample_downloaded`, `kit_downloaded`, `guest_guide_downloaded`. No names, emails, notes or free text are sent. /your-data discloses analytics only when this is enabled. | off |
 
 ## Deployment
 
