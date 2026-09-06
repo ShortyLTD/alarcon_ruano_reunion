@@ -9,14 +9,9 @@ export const siteUrl = rawSiteUrl.replace(/\/+$/, '');
 
 export const siteName = 'Santa Cruz Reunion Kit';
 
-/** Hosts that should permanently redirect to the canonical origin (see next.config.ts). */
 export const legacyHosts = ['www.santacruzreunion.com', 'alarconruanoreunion.vercel.app', 'santa-cruz-reunion-kit.vercel.app'];
 
-/**
- * The original Alarcon Ruano guest website (June 2026), referenced by /our-reunion.
- * It moved off the apex domain when the kit took over santacruzreunion.com; it is served
- * from its Netlify site until the 2026.santacruzreunion.com alias is configured there.
- */
+/** The original guest website remains separate from this planning product. */
 export const originalReunionSite = (process.env.NEXT_PUBLIC_ORIGINAL_SITE_URL || 'https://preeminent-lamington-8ed79b.netlify.app/').replace(/\/*$/, '/');
 
 /** Date the local research and guides were last checked against official sources. */
@@ -27,7 +22,7 @@ export const researchCheckedLabel = 'September 6, 2026';
 export const plannedPrice = 39;
 
 /** Optional public contact address. When empty, contact and notify-me links are not rendered. */
-export const contactEmail = (process.env.NEXT_PUBLIC_CONTACT_EMAIL || '').trim();
+export const contactEmail = (process.env.NEXT_PUBLIC_CONTACT_EMAIL || 'jason@t3.am').trim();
 
 /** Vercel Web Analytics is loaded only when explicitly enabled for the deployment. */
 export const analyticsEnabled = process.env.NEXT_PUBLIC_VERCEL_ANALYTICS === '1';

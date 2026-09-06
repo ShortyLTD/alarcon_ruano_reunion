@@ -1,4 +1,4 @@
-import { dateLabel } from './planner';
+import { dateLabel, quoteCostType } from './planner';
 import type { Brief, Vendor, Workspace } from './planner';
 
 const catering = (vendor: Vendor) => vendor.id === 'zoccolis';
@@ -40,7 +40,7 @@ export function bookingChecks(vendor: Vendor): string[] {
 }
 
 function eventContext(vendor: Vendor, brief: Brief): string {
-  const count = vendor.category === 'hotel'
+  const count = vendor.category === 'hotel' && brief.rooms > 0
     ? `${brief.rooms} rooms for ${brief.nights} nights`
     : `${vendor.category === 'restaurant' && !catering(vendor) ? brief.dinnerGuests : brief.guests} people`;
   return `${brief.family.trim() || 'our family'} reunion in Santa Cruz, starting ${dateLabel(brief.date)}, for ${count}`;
@@ -70,17 +70,19 @@ export function comparisonRows(workspace: Workspace, vendors: Vendor[]): unknown
     'Capacity and exact space / room types', 'Taxes and mandatory fees', 'Parking / breakfast or service charge / gratuity',
     'Room block cutoff and attrition / minimum spend / permit steps', 'Cancellation and payment terms',
     'Access and practical needs', 'Weather alternative where relevant', 'Provider response date', 'Source or quote reference', 'Organizer notes',
+    'Cost category', 'Quote record ID', 'Included in working budget',
   ]];
   for (const vendor of vendors.filter(v => workspace.selected.includes(v.id))) {
-    const quote = workspace.quotes.find(q => q.vendorId === vendor.id);
+    const quotes = workspace.quotes.filter(q => q.vendorId === vendor.id);
     const unknown = 'Not recorded — ask provider';
-    rows.push([
-      vendor.name, catering(vendor) ? 'catering' : vendor.category, eventContext(vendor, workspace.brief),
+    for (const quote of quotes.length ? quotes : [undefined]) rows.push([
+      vendor.name, catering(vendor) ? 'catering' : vendor.category, quote && vendor.category === 'hotel' && quoteCostType(quote, vendors) === 'event' ? `Hotel event charge; ${workspace.brief.guests} total reunion guests. Confirm the exact meal or gathering scope in this proposal.` : eventContext(vendor, workspace.brief),
       quote ? quote.amount : unknown,
       quote ? (quote.status === 'estimate' ? 'Organizer estimate — not a provider quote' : `${quote.status} — recorded by organizer`) : 'No quote recorded',
       quote ? quote.deposit : unknown, quote?.deadline || unknown,
       unknown, unknown, unknown, unknown, unknown, unknown, unknown, unknown, unknown,
       vendor.url, quote?.notes || '',
+      quote ? quoteCostType(quote, vendors) : 'Not recorded', quote?.id || '', quote ? quote.includedInBudget === false ? 'No — alternative proposal' : 'Yes' : 'Not recorded',
     ]);
   }
   return rows;

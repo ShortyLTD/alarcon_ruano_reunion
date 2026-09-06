@@ -5,7 +5,7 @@ import { registerHooks } from 'node:module';
 // The app uses Next's extensionless TypeScript imports; resolve that single local
 // import when testing the same files directly under Node's type stripping.
 registerHooks({ resolve(specifier, context, nextResolve) {
-  return nextResolve(['./planner', './action-kit'].includes(specifier) ? `${specifier}.ts` : specifier, context);
+  return nextResolve(['./planner', './action-kit', './vendor-evidence', './guest-guide'].includes(specifier) ? `${specifier}.ts` : specifier, context);
 } });
 const { defaultBrief, defaultWorkspace, dateLabel, inquiry, makeSchedule, recommendVendors, suggestTasks, parseWorkspace } = await import('../lib/planner.ts');
 const { createPacket, csvCell, guestGuideHtml } = await import('../lib/exports.ts');
