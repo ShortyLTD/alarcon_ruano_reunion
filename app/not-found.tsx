@@ -1,4 +1,7 @@
+import type { Metadata } from 'next';
 import Link from 'next/link';
+
+export const metadata: Metadata = { title: 'Page not found', description: 'This page may have moved. Return to the Santa Cruz Reunion Kit planner or home page.', robots: { index: false, follow: true } };
 
 export default function NotFound() {
   return <main className="guide-shell">
