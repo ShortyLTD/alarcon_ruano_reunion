@@ -1,14 +1,17 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { ArrowRight, ArrowUpRight, Waves } from 'lucide-react';
-import { siteUrl } from '@/lib/guides';
+import { guides, siteUrl } from '@/lib/guides';
 
 export const metadata: Metadata = {
-  title: 'Our Real Santa Cruz Family Reunion | June 2026',
-  description: 'See the Alarcon Ruano family reunion that inspired the kit: a June 2026 weekend, an original guest website, a local guide, and lodging suggestions.',
+  title: { absolute: 'The Santa Cruz Family Reunion That Inspired the Kit (June 2026)' },
+  description: 'See the June 2026 family reunion that inspired the kit: the original guest website, the June 5–7 schedule, 16 lodging suggestions, a local guide, and a map.',
   alternates: { canonical: '/our-reunion' },
+  robots: { index: true, follow: true },
   openGraph: {
     type: 'article',
+    publishedTime: '2026-09-06',
+    modifiedTime: '2026-09-06',
     url: '/our-reunion',
     title: 'The family reunion that started Santa Cruz Reunion Kit',
     description: 'Our own family weekend inspired a better starting point for the next organizer. See the original guest website and weekend plan.',
@@ -48,18 +51,18 @@ const resources = [
 
 export default function OurReunion() {
   return <div className="marketing reunion-case">
-    <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({ '@context': 'https://schema.org', '@type': 'Article', headline: 'The family reunion that started Santa Cruz Reunion Kit', description: 'The original guest website and June 2026 family weekend that inspired the planning kit.', mainEntityOfPage: `${siteUrl}/our-reunion`, image: [`${siteUrl}/images/our-family-reunion.webp`], dateModified: '2026-09-06', author: { '@type': 'Organization', name: 'Santa Cruz Reunion Kit', url: siteUrl }, citation: originalSite }).replace(/</g, '\\u003c') }}/>
+    <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({ '@context': 'https://schema.org', '@graph': [{ '@type': 'Article', headline: 'The family reunion that started Santa Cruz Reunion Kit', description: 'The original guest website and June 2026 family weekend that inspired the planning kit.', mainEntityOfPage: `${siteUrl}/our-reunion`, image: [`${siteUrl}/images/our-family-reunion.webp`], datePublished: '2026-09-06', dateModified: '2026-09-06', author: { '@type': 'Organization', name: 'Santa Cruz Reunion Kit', url: siteUrl }, publisher: { '@id': `${siteUrl}/#organization` }, citation: originalSite }, { '@type': 'BreadcrumbList', itemListElement: [{ '@type': 'ListItem', position: 1, name: 'Home', item: siteUrl }, { '@type': 'ListItem', position: 2, name: 'Our reunion', item: `${siteUrl}/our-reunion` }] }] }).replace(/</g, '\\u003c') }}/>
     <a className="mk-skip" href="#main">Skip to content</a>
     <header className="mk-nav">
-      <Link href="/" className="brand" aria-label="Santa Cruz Reunion Kit home"><span className="brand-icon"><Waves size={24}/></span><span>Santa Cruz<span className="brand-sub">REUNION KIT</span></span></Link>
-      <nav aria-label="Main navigation"><Link href="/#included">The kit</Link><Link href="/our-reunion" aria-current="page">Our reunion</Link><Link href="/guides">Local guides</Link><Link href="/plan" className="mk-nav-plan">Open planner <ArrowRight size={15}/></Link></nav>
+      <Link href="/" className="brand"><span className="brand-icon"><Waves size={24}/></span><span>Santa Cruz<span className="brand-sub">REUNION KIT</span></span></Link>
+      <nav aria-label="Main navigation"><Link href="/#included">The kit</Link><Link href="/our-reunion" aria-current="page">Our reunion</Link><Link href="/guides">Local guides</Link><Link href="/#price">Pricing</Link><Link href="/plan" className="mk-nav-plan">Open planner <ArrowRight size={15}/></Link></nav>
     </header>
     <main id="main">
       <section className="rc-intro mk-wrap">
         <p className="mk-label">THE ALARCON RUANO FAMILY REUNION · JUNE 2026</p>
-        <h1>Our family came together.<br/><em>This is where the kit began.</em></h1>
-        <p className="rc-lede">In June 2026, our founder helped organize a Santa Cruz reunion for around 100 relatives. The planning work behind that weekend inspired a better starting point for the next family organizer.</p>
-        <div className="rc-intro-links"><a href={originalSite} target="_blank" rel="noreferrer" className="mk-text-link">Visit our original guest website <ArrowUpRight size={17}/></a><Link href="/plan?start=1" className="mk-text-link">Start your own plan <ArrowRight size={17}/></Link></div>
+        <h1>Our family came together.<br/><em>The experience inspired the kit.</em></h1>
+        <p className="rc-lede">In June 2026, our founder helped organize a Santa Cruz reunion for around 100 relatives. The original guest website brought the June 5–7 schedule, 16 lodging suggestions, a local guide, and a map into one place. The planning kit was researched and developed afterward; it did not organize this event.</p>
+        <div className="rc-intro-links"><a href={originalSite} target="_blank" rel="noreferrer" className="mk-text-link">Visit our original guest website <ArrowUpRight size={17}/></a><Link href="/plan?start=1" className="mk-text-link">Start my free plan <ArrowRight size={17}/></Link></div>
       </section>
       <figure className="rc-main-artifact mk-wrap">
         <a href={originalSite} target="_blank" rel="noreferrer" aria-label="Open the original Alarcon Ruano reunion guest website"><img src="/images/our-family-reunion.webp" alt="The original Alarcon Ruano Family Reunion website, with its June 2026 invitation and Santa Cruz by the Sea title" width="1348" height="926" fetchPriority="high"/></a>
@@ -80,8 +83,8 @@ export default function OurReunion() {
         </div>
       </section>
       <section className="rc-next mk-wrap" aria-labelledby="next-title">
-        <div className="rc-section-intro"><p className="mk-label">FROM OUR WEEKEND TO YOURS</p><h2 id="next-title">Keep the head start.<br/>Make the reunion yours.</h2><p>We turned the experience into a kit for researching places, preparing inquiries, comparing replies, and putting a guest plan together. Your dates, budget, and family shape what comes next.</p><Link href="/plan?start=1" className="mk-button">Build my reunion preview <ArrowRight size={17}/></Link><p className="mk-micro">Free working preview · No account or card required</p></div>
-        <aside className="rc-context" aria-label="About this real reunion example"><h3>What this example shows</h3><p>The guest website documents our family’s June 2026 plans. The approximate attendance comes from the founder’s firsthand account.</p><p>The commercial planning kit was developed afterward. Its current preview provides a downloadable guest guide; a hosted guest website like this historical example is not included.</p><p>Provider availability, current prices, reservations, and permits need to be confirmed for your own reunion.</p><Link href="/#sample" className="mk-text-link">Look inside today’s kit <ArrowRight size={15}/></Link></aside>
+        <div className="rc-section-intro"><p className="mk-label">FROM OUR WEEKEND TO YOURS</p><h2 id="next-title">Keep the head start.<br/>Make the reunion yours.</h2><p>Answer three short steps to turn the local research into your shortlist, editable provider inquiries, workbooks, weekend schedule, and downloadable guest guide.</p><Link href="/plan?start=1" className="mk-button">Start my free plan <ArrowRight size={17}/></Link><p className="mk-micro">Free working preview · No account or card required</p></div>
+        <aside className="rc-context" aria-label="About this real reunion example"><h3>What this example can—and cannot—show</h3><p>The original guest website documents our family’s June 2026 plans. The approximate attendance comes from the founder’s firsthand account.</p><p>It shows the value of one clear place for guest information. It is not a customer case study, and it does not show results produced by the Santa Cruz Reunion Kit; the kit was developed afterward. Its current preview provides a downloadable guest guide; a hosted guest website like this one is not included.</p><p>Provider availability, current prices, reservations, permits, and accessibility details still need to be confirmed for every reunion.</p><Link href="/#sample" className="mk-text-link">Look inside today’s kit <ArrowRight size={15}/></Link><h3>Start with a planning guide</h3><ul className="rc-guide-links">{guides.map(guide => <li key={guide.slug}><Link href={`/guides/${guide.slug}`}>{guide.shortTitle} <ArrowRight size={14}/></Link></li>)}</ul></aside>
       </section>
     </main>
     <footer className="mk-footer mk-wrap"><div><Link href="/" className="brand">Santa Cruz<span className="brand-sub">REUNION KIT</span></Link><p>Made for getting together.</p></div><nav aria-label="Footer navigation"><Link href="/our-reunion" aria-current="page">Our reunion</Link><Link href="/guides">Planning guides</Link><Link href="/plan">Your planner</Link><Link href="/#price">Pricing</Link><Link href="/your-data">Your data</Link></nav><small>Historical example: June 2026. Original guest website reviewed September 6, 2026.</small></footer>
