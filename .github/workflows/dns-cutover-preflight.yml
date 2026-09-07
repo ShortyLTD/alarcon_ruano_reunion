@@ -1,0 +1,92 @@
+name: DNS cutover preflight
+
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/dns-cutover-preflight.yml"
+  workflow_dispatch:
+
+permissions: {}
+
+jobs:
+  verify-dns:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - name: Query Vercel authoritative nameservers
+        shell: bash
+        env:
+          EXPECTED_DMARC: "v=DMARC1; p=quarantine; adkim=r; aspf=r; rua=mailto:dmarc_rua@onsecureserver.net;"
+        run: |
+          python3 - <<'PY'
+          import ipaddress
+          import os
+          import re
+          import shlex
+          import subprocess
+          import sys
+
+          domain = "santacruzreunion.com"
+          expected_dmarc = os.environ["EXPECTED_DMARC"]
+          failures = []
+          summary = ["# DNS cutover preflight", "",
+                     "Read-only queries. This workflow does not change DNS or deployments.", "",
+                     "| Nameserver | Record | Answers |",
+                     "| --- | --- | --- |"]
+
+          def query(name, record_type, server=None):
+              command = ["dig"]
+              if server:
+                  command += ["@" + server, "+norecurse"]
+              command += [name, record_type, "+time=5", "+tries=1"]
+              print("$ " + shlex.join(command), flush=True)
+              result = subprocess.run(command, text=True, capture_output=True, timeout=20)
+              print(result.stdout, flush=True)
+              if result.stderr:
+                  print(result.stderr, flush=True)
+              if result.returncode or "status: NOERROR" not in result.stdout:
+                  failures.append("DNS query failed: " + shlex.join(command))
+              if server:
+                  flags = re.search(r"flags: ([^;]+);", result.stdout)
+                  if not flags or "aa" not in flags.group(1).split():
+                      failures.append(server + " did not return an authoritative response for " + name)
+              answers = []
+              for line in result.stdout.splitlines():
+                  if not line or line.startswith(";"):
+                      continue
+                  fields = line.split(None, 4)
+                  if len(fields) == 5 and fields[0].rstrip(".").lower() == name.lower() and fields[3] == record_type:
+                      answers.append(fields[4])
+              return answers
+
+          current_ns = query(domain, "NS")
+          summary += ["| Current delegation | NS | " + ", ".join(current_ns) + " |"]
+          for server in ("ns1.vercel-dns.com", "ns2.vercel-dns.com"):
+              apex = query(domain, "A", server)
+              www_cname = query("www." + domain, "CNAME", server)
+              www_a = query("www." + domain, "A", server)
+              dmarc = query("_dmarc." + domain, "TXT", server)
+              for label, addresses in (("apex", apex), ("www", www_a)):
+                  if not addresses:
+                      failures.append(server + ": missing " + label + " A record")
+                  for address in addresses:
+                      try:
+                          ipaddress.IPv4Address(address)
+                      except ValueError:
+                          failures.append(server + ": invalid " + label + " A record")
+              decoded_dmarc = ["".join(shlex.split(value)) for value in dmarc]
+              if decoded_dmarc != [expected_dmarc]:
+                  failures.append(server + ": DMARC does not exactly match the requested single record")
+              for label, values in (("apex A", apex), ("www CNAME", www_cname), ("www A", www_a), ("_dmarc TXT", decoded_dmarc)):
+                  answer = ", ".join(values) or "(no CNAME returned; www A checked separately)"
+                  summary.append("| " + server + " | " + label + " | " + answer + " |")
+
+          summary += ["", "Result: " + ("FAIL" if failures else "PASS")]
+          summary += ["- " + failure for failure in failures]
+          with open(os.environ["GITHUB_STEP_SUMMARY"], "a") as output:
+              output.write("\n".join(summary) + "\n")
+          if failures:
+              print("\n".join(failures), file=sys.stderr)
+              sys.exit(1)
+          print("PASS: both Vercel nameservers answer authoritatively for apex, www, and the exact DMARC record.")
+          PY
