@@ -61,6 +61,26 @@ jobs:
 
           current_ns = query(domain, "NS")
           summary += ["| Current delegation | NS | " + ", ".join(current_ns) + " |"]
+          expected_ns = {"ns1.vercel-dns.com", "ns2.vercel-dns.com"}
+          if {value.rstrip(".").lower() for value in current_ns} != expected_ns:
+              failures.append("Public NS answers must contain only the two Vercel nameservers")
+          public_dmarc = ["".join(shlex.split(value)) for value in query("_dmarc." + domain, "TXT")]
+          if public_dmarc != [expected_dmarc]:
+              failures.append("Public DMARC answer does not exactly match the requested record")
+          summary.append("| Public DNS | _dmarc TXT | " + ", ".join(public_dmarc) + " |")
+
+          trace_command = ["dig", "NS", domain, "+trace", "+time=5", "+tries=1"]
+          print("$ " + shlex.join(trace_command), flush=True)
+          trace = subprocess.run(trace_command, text=True, capture_output=True, timeout=60)
+          print(trace.stdout, flush=True)
+          if trace.stderr:
+              print(trace.stderr, flush=True)
+          traced_ns = set(re.findall(r"^santacruzreunion\.com\.\s+\d+\s+IN\s+NS\s+(\S+)", trace.stdout, re.MULTILINE))
+          traced_ns = {value.rstrip(".").lower() for value in traced_ns}
+          if trace.returncode or traced_ns != expected_ns:
+              failures.append("DNS trace did not confirm Vercel-only delegation")
+          summary.append("| DNS trace | NS | " + ", ".join(sorted(traced_ns)) + " |")
+
           for server in ("ns1.vercel-dns.com", "ns2.vercel-dns.com"):
               apex = query(domain, "A", server)
               www_cname = query("www." + domain, "CNAME", server)
