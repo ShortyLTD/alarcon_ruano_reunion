@@ -95,3 +95,7 @@ The Ploy audit implementation was merged into `main` as `435c664`. The release b
 This release passed the production build, TypeScript checks and all 16 functional/export tests. Browser review covered the desktop homepage, mobile homepage and reunion story at 320px/390px, completion of the three-step mobile interview, persisted reunion state, personalized inquiry content, and kit-generation success feedback. Browser download-event capture timed out, so an observed completed file transfer is not claimed from this verification session; the existing tests validate generated ZIP contents and private guest exports. A temporary responsive-review page remains confined to the preview deployment.
 
 The original Chrome account connection was not available to this session; the authenticated Ploy audit and recommendations already committed in `docs/ploy-audit-2026-09-06.md` supplied the audit evidence. No new Ploy audit or measured conversion gain is claimed.
+
+## September 7, 2026 — cutover verification boundary
+
+The existing planner stylesheet hides `.save-status` below 760px. The three-step intake and browser save state work at 390px, but the literal “Saved on this device” indicator is not visible there. This cutover preserves the planner UI as instructed; mobile label visibility remains a separate UI issue. Desktop verification requires the visible indicator, and both sizes verify the saved state and persistence after reload.
