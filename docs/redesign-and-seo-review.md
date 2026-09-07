@@ -96,6 +96,6 @@ This release passed the production build, TypeScript checks and all 16 functiona
 
 The original Chrome account connection was not available to this session; the authenticated Ploy audit and recommendations already committed in `docs/ploy-audit-2026-09-06.md` supplied the audit evidence. No new Ploy audit or measured conversion gain is claimed.
 
-## September 7, 2026 — cutover verification boundary
+## September 7, 2026 — mobile save-status follow-through
 
-The existing planner stylesheet hides `.save-status` below 760px. The three-step intake and browser save state work at 390px, but the literal “Saved on this device” indicator is not visible there. This cutover preserves the planner UI as instructed; mobile label visibility remains a separate UI issue. Desktop verification requires the visible indicator, and both sizes verify the saved state and persistence after reload.
+After the cutover, the owner authorized the planner UI fix. The mobile header now gives the save indicator its own full-width row beneath the brand and primary action. Existing typography, colors, copy, save behavior and desktop layout are preserved. Browser verification requires a visible “Saved on this device” indicator at 1366px, 390px and 320px, checks that it fits without overlapping the primary action, and verifies the three-step intake and persistence after reload.
