@@ -56,10 +56,10 @@ try {
     await page.goto(base + '/plan?start=1');
     const dialog = page.getByRole('dialog');
     await dialog.getByLabel('Family or reunion name', { exact: true }).fill('Cutover check family');
-    await dialog.getByLabel('Total reunion guests', { exact: true }).fill('40');
-    await dialog.getByLabel('Welcome dinner guests', { exact: true }).fill('30');
+    await dialog.getByLabel(/^Total reunion guests/).fill('40');
+    await dialog.getByLabel(/^Welcome dinner guests/).fill('30');
     await dialog.getByRole('button', { name: 'Continue', exact: true }).click();
-    await dialog.getByLabel('Shared event budget ($)', { exact: true }).fill('4000');
+    await dialog.getByLabel(/^Shared event budget/).fill('4000');
     await dialog.getByRole('button', { name: 'Continue', exact: true }).click();
     await dialog.getByLabel('Organizer name', { exact: true }).fill('Browser verification');
     await dialog.getByRole('button', { name: 'Build my plan', exact: true }).click();
