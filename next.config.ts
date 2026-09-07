@@ -2,7 +2,7 @@ import type { NextConfig } from 'next';
 
 const canonicalHost = 'santacruzreunion.com';
 // Hosts that should send visitors and search engines to the canonical domain.
-const legacyHosts = ['www.santacruzreunion.com', 'alarconruanoreunion.vercel.app', 'santa-cruz-reunion-kit.vercel.app'];
+const legacyHosts = ['www.santacruzreunion.com', 'alarconruanoreunion.vercel.app', 'santa-cruz-reunion-kit.vercel.app', 'santacruzreunion.vercel.app'];
 
 const config: NextConfig = {
   poweredByHeader: false,

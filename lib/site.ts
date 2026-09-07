@@ -9,7 +9,7 @@ export const siteUrl = rawSiteUrl.replace(/\/+$/, '');
 
 export const siteName = 'Santa Cruz Reunion Kit';
 
-export const legacyHosts = ['www.santacruzreunion.com', 'alarconruanoreunion.vercel.app', 'santa-cruz-reunion-kit.vercel.app'];
+export const legacyHosts = ['www.santacruzreunion.com', 'alarconruanoreunion.vercel.app', 'santa-cruz-reunion-kit.vercel.app', 'santacruzreunion.vercel.app'];
 
 /** The original guest website remains separate from this planning product. */
 export const originalReunionSite = (process.env.NEXT_PUBLIC_ORIGINAL_SITE_URL || 'https://preeminent-lamington-8ed79b.netlify.app/').replace(/\/*$/, '/');
