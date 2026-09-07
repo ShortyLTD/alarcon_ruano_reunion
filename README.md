@@ -57,12 +57,13 @@ All settings are optional public build-time variables (set them in the Vercel pr
 | Variable | Purpose | Default |
 | --- | --- | --- |
 | `NEXT_PUBLIC_SITE_URL` | Canonical origin used for canonicals, Open Graph, sitemap, robots and structured data. Set this when moving to a branded domain. | `https://santacruzreunion.com` |
+| `NEXT_PUBLIC_ORIGINAL_SITE_URL` | Original June 2026 family guest guide, hosted separately from the kit. | `https://2026.santacruzreunion.com/` |
 | `NEXT_PUBLIC_CONTACT_EMAIL` | Public contact for the acquisition offer, support and data questions. Set the buyer's address on transfer. | jason@t3.am |
 | `NEXT_PUBLIC_VERCEL_ANALYTICS` | Set to `1` after enabling Web Analytics for the Vercel project. Loads Vercel's cookieless Web Analytics script (no npm dependency) and records funnel events: `preview_started`, `plan_built`, `inquiry_opened`, `inquiry_copied`, `sample_viewed`, `sample_downloaded`, `kit_downloaded`, `guest_guide_downloaded`, `guest_link_created`. No names, emails, notes or free text are sent. /your-data discloses analytics only when this is enabled. | off |
 
 ## Deployment
 
-Vercel framework: Next.js. Build command: `npm run build`. No environment secrets are needed for this preview. Marketing, /blueprint, /for-sale and guide pages allow indexing; /plan and /reunion are noindex. Vercel is deployed from the same authored source saved in GitHub. The Vercel project `alarcon_ruano_reunion` is connected to this repository and serves https://santacruzreunion.com; legacy hosts redirect through next.config.ts. The original guest site remains on its Netlify URL, configurable with NEXT_PUBLIC_ORIGINAL_SITE_URL.
+Vercel framework: Next.js. Build command: `npm run build`. No environment secrets are needed for this preview. Marketing, /blueprint, /for-sale and guide pages allow indexing; /plan and /reunion are noindex. Vercel is deployed from the same authored source saved in GitHub. The Vercel project `alarcon_ruano_reunion` is connected to this repository and serves https://santacruzreunion.com; legacy hosts redirect through next.config.ts. DNS is hosted by Vercel; GoDaddy is the registrar only. The original June 2026 guest guide is hosted at https://2026.santacruzreunion.com/ in the separate `da-boyz/reunion-2026-guest-site` Vercel project, connected to `ShortyLTD/santacruzreunion-2026`. Its URL is configurable with `NEXT_PUBLIC_ORIGINAL_SITE_URL`. The guest subdomain is independent and must not be added to the kit's legacy-host redirect list.
 
 ## Offer and validation
 

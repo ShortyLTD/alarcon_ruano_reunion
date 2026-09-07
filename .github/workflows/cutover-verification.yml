@@ -1,0 +1,67 @@
+name: Cutover verification
+on:
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  build:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm test
+      - run: npm run build
+      - name: Verify retired-host references are absent
+        run: |
+          if git grep -i -n -e 'net''lify'; then
+            exit 1
+          fi
+      - name: Install browser test tools
+        run: |
+          npm install --no-save --package-lock=false playwright@1.63.0
+          npx playwright install --with-deps chromium
+      - name: Verify the built kit
+        run: |
+          npm start -- --port 4000 > /tmp/reunion-preview.log 2>&1 &
+          node scripts/verify-cutover.mjs
+        env:
+          KIT_BASE_URL: http://localhost:4000
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: kit-build-browser-evidence
+          path: evidence/
+          retention-days: 14
+  production:
+    if: github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Verify final DNS, redirects and retired project
+        run: python3 scripts/verify-cutover-network.py
+      - name: Install browser test tools
+        run: |
+          npm install --no-save --package-lock=false playwright@1.63.0
+          npx playwright install --with-deps chromium
+      - name: Verify production metadata, links and planner
+        run: node scripts/verify-cutover.mjs
+        env:
+          KIT_BASE_URL: https://santacruzreunion.com
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: kit-production-browser-evidence
+          path: evidence/
+          retention-days: 14
